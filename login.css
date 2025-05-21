@@ -1,0 +1,101 @@
+body {
+    /* Establecer la imagen como fondo */
+    background-image: url('./medios/paredblanca.png');
+    
+    /* Asegura que la imagen cubra toda la pantalla */
+    background-size: cover;
+    
+    /* Hace que el fondo se mantenga fijo durante el desplazamiento */
+    background-attachment: fixed;
+    
+    /* Centra la imagen en la pantalla */
+    background-position: center center;
+    
+    /* Garantiza que el fondo ocupe todo el contenido */
+    background-repeat: no-repeat;
+
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    position: relative; /* Permite que el logo se posicione de manera absoluta en relación al body */
+}
+
+/* Estilo para el logo centrado en la parte superior */
+.logo {
+    position: absolute; /* Posiciona el logo en relación al body */
+    top: 20px; /* Distancia desde la parte superior de la página */
+    left: 50%; /* Lo coloca en el centro horizontal */
+    transform: translateX(-50%); /* Ajusta para centrarlo perfectamente */
+    width: 150px; /* Ajusta el tamaño del logo */
+    height: auto; /* Mantiene las proporciones del logo */
+    z-index: 10; /* Asegura que el logo esté por encima del fondo */
+}
+
+/* Caja del formulario de inicio de sesión */
+.login-box {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 300px;
+    text-align: center;
+    z-index: 1; /* Caja de login por encima del fondo y detrás del logo */
+}
+
+/* Título de inicio de sesión */
+.login-box h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Estilo de los campos de entrada */
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Efecto de enfoque en los campos de entrada */
+.input-field:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Estilo del botón de iniciar sesión */
+.btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Efecto de hover sobre el botón */
+.btn:hover {
+    background-color: #45a049;
+}
+
+/* Estilo para los mensajes de error */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+@media screen and (max-height: 500px) {
+    /* Ocultar el logo cuando la pantalla se estrecha */
+    .logo {
+        display: none;
+    }
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Pedir Bocadillo</title>
+    <link rel="stylesheet" href="pedirBocadillo.css">
+	<script src="alumnado.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            verificarAcceso();
+            mostrarSaldo();
+        });
+    </script>
+</head>
+<body>
+	<!-- Barra de navegación superior -->
+    <header class="navbar">
+        <div class="logo-container">
+            <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
+            <span id="saldo-alumno" class="saldo">Saldo: -- €</span>
+        </div>
+        <nav class="nav-options">
+            <a href="pedirBocadillo.html" class="nav-link">PedirBocadillo</a>
+            <a href="historicoPedidosAlumno.html" class="nav-link">Histórico de Pedidos</a>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </nav>
+    </header>
+
+    <!-- Contenedor principal -->
+    <main>
+        <h1>Selecciona tu Bocadillo</h1>
+
+        <!-- Contenedor para mensajes de error-->
+    	<div id="mensaje-error" class="mensaje-error" style="display: none;"></div>
+
+        <!-- Contenedor de opciones -->
+        <div class="bocadillos-container" id="bocadillos-container">
+            <!-- Bocadillos dinámicos se insertarán aquí -->
+        </div>
+    </main>
+</body>
+</html>

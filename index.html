@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MI BOCADILLO</title>
+    <link rel="stylesheet" href="login.css">
+    <script src="login.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            faltaPermisos();
+        });
+    </script>
+</head>
+<body>
+
+<!-- Logo en la esquina superior izquierda -->
+<img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
+
+<div class="login-box">
+    <h2>INICIO DE SESIÓN</h2>
+    <!-- Formulario de login -->
+    <form id="login-form">
+        <!-- Campo de correo -->
+        <input type="email" class="input-field" name="email" id="email" placeholder="Correo electrónico" required>
+        <!-- Campo de contraseña -->
+        <input type="password" class="input-field" name="password" id="password" placeholder="Contraseña" required>
+        <!-- Botón de iniciar sesión -->
+        <input type="button" name="enviar" value="Enviar" class="btn" onclick="loginUser()"/>
+    </form>
+</div>
+
+
+</body>
+</html>

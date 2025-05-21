@@ -1,0 +1,185 @@
+.mensaje-error {
+    color: black;
+    background-color: #ffe6e6;
+    border: 1px solid red;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    display: block;
+}
+
+.bocadillo-seleccionado {
+    background-color: #f0f0f0;
+    border: 2px solid #d0d0d0;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.bocadillo-seleccionado h3 {
+    color: #888; /* Cambiar el color del título */
+}
+
+.bocadillo-seleccionado p {
+    color: #666; /* Cambiar el color del texto */
+}
+
+.seleccionado-mensaje {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 5px;
+    border: 2px solid #3e8e41;
+    font-size: 16px;
+}
+
+
+.nav-options {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 10px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-link:hover {
+    background-color: #fff;
+    color: #4CAF50;
+    border-radius: 4px;
+}
+
+/* Contenedor del logo y saldo */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaciado entre el logo y el saldo */
+}
+
+.logo {
+    width: 50px;
+    height: auto;
+}
+
+.saldo {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+
+/* Fondo del cuerpo */
+body {
+    background-image: url('./medios/paredblanca.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+    background-repeat: no-repeat;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Barra de navegación */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #4CAF50;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+}
+
+/* Logo de la barra */
+.navbar .logo {
+    width: 120px;
+    height: auto;
+}
+
+/* Botones de la barra */
+.logout-btn {
+    background-color: #fff;
+    color: #4CAF50;
+    border: 2px solid #4CAF50;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+/* Contenido principal */
+main {
+    margin-top: 80px;
+    padding: 20px;
+    text-align: center;
+}
+
+main h1 {
+    font-size: 28px;
+    color: #333;
+}
+
+.bocadillos-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Diseño de tarjeta para los bocadillos */
+.bocadillo-card {
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: left;
+}
+
+.bocadillo-card h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #4CAF50;
+}
+
+.bocadillo-card p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.bocadillo-card button {
+    width: 100%;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.bocadillo-card button:hover {
+    background-color: #45A049;
+}

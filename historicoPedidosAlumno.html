@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Histórico de Pedidos - MiBOCADILLO</title>
+    <link rel="stylesheet" href="cocinaDashboard.css">
+    <script src="historicoPedidosAlumno.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            verificarAcceso();
+        });
+    </script>
+</head>
+<body>
+    <!-- Barra de navegación superior -->
+    <header class="navbar">
+        <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
+        <nav class="nav-options">
+            <a href="pedirBocadillo.html" class="nav-link">Pedidos del Día</a>
+            <a href="historicoPedidosAlumno.html" class="nav-link">Histórico de Pedidos</a>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </nav>
+    </header>
+
+    <!-- Contenedor principal -->
+    <main>
+        <h1>Histórico de Pedidos</h1>
+
+        <div id="error-message" class="error-container"></div>
+
+        <div class="filter-container">
+            <label for="filter-column">Filtrar por:</label>
+            <select id="filter-column">
+                <option value="bocadillo">Bocadillo</option>
+                <option value="tipo">Tipo</option>
+                <option value="precio_pedido">Precio</option>
+                <option value="fecha">Fecha Pedido</option>
+                <option value="fecha_recogida">Fecha Recogida</option>
+            </select>
+
+            <input type="text" id="filter-value" placeholder="Introduce un valor para filtrar">
+            <button id="filter-button">Filtrar</button>
+            <button id="reset-button">Restablecer</button>
+        </div>
+
+        <div id="total-container">
+            <strong>Total gastado: </strong><span id="total-gastado">0.00€</span>
+        </div>
+
+        <!-- Contenedor de la tabla -->
+        <div class="table-container">
+            <table id="historico-table">
+                <thead>
+                    <tr>
+                        <th data-column="bocadillo">Bocadillo</th>
+                        <th data-column="tipo">Tipo</th>
+                        <th data-column="precio_pedido">Precio</th>
+                        <th data-column="fecha">Fecha Pedido</th>
+                        <th>Fecha Recogida</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Filas dinámicas se insertarán aquí -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Histórico de Pedidos - MiBOCADILLO</title>
+    <link rel="stylesheet" href="cocinaDashboard.css">
+    <script src="historicoPedidosCocina.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            verificarAcceso();
+        });
+    </script>
+</head>
+<body>
+    <!-- Barra de navegación superior -->
+    <header class="navbar">
+        <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
+        <nav class="nav-options">
+            <a href="cocinaDashboard.html" class="nav-link">Pedidos del Día</a>
+            <a href="historicoPedidosCocina.html" class="nav-link">Histórico de Pedidos</a>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </nav>
+    </header>
+
+    <!-- Contenedor principal -->
+    <main>
+        <h1>Histórico de Pedidos</h1>
+
+        <div id="error-message" class="error-container"></div>
+
+        <div class="filter-container">
+            <label for="filter-column">Filtrar por:</label>
+            <select id="filter-column">
+                <option value="alumno">Alumno</option>
+                <option value="curso">Curso</option>
+                <option value="bocadillo">Bocadillo</option>
+                <option value="tipo">Tipo</option>
+                <option value="precio_pedido">Precio</option>
+                <option value="fecha">Fecha Pedido</option>
+                <option value="fecha_recogida">Fecha Recogida</option>
+            </select>
+
+            <input type="text" id="filter-value" placeholder="Introduce un valor para filtrar">
+            <button id="filter-button">Filtrar</button>
+            <button id="reset-button">Restablecer</button>
+        </div>
+
+
+        <!-- Contenedor de la tabla -->
+        <div class="table-container">
+            <table id="historico-table">
+                <thead>
+                    <tr>
+                        <th data-column="alumno">Alumno</th>
+                        <th data-column="curso">Curso</th>
+                        <th data-column="bocadillo">Bocadillo</th>
+                        <th data-column="tipo">Tipo</th>
+                        <th data-column="precio_pedido">Precio</th>
+                        <th data-column="fecha">Fecha Pedido</th>
+                        <th data-column="fecha_recogida">Fecha Recogida</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Filas dinámicas se insertarán aquí -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        <div id="pagination-container" class="pagination-container">
+            <button id="prev-page-btn" class="pagination-btn" onclick="changePage('prev')">Anterior</button>
+            <span id="page-info">Página 1 de 1</span>
+            <button id="next-page-btn" class="pagination-btn" onclick="changePage('next')">Siguiente</button>
+            <input type="number" id="page-input" class="page-input" min="1" onchange="goToPage()">
+        </div>
+    </main>
+</body>
+</html>

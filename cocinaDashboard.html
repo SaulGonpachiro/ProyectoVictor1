@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>MiBOCADILLO</title>
+	<link rel="stylesheet" href="cocinaDashboard.css">
+	<script src="cocina.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            verificarAcceso();
+        });
+    </script>
+</head>
+<body>
+	<!-- Barra de navegación superior -->
+    <header class="navbar">
+        <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
+        <nav class="nav-options">
+        	<a href="cocinaDashboard.html" class="nav-link">Pedidos del Día</a>
+        	<a href="historicoPedidosCocina.html" class="nav-link">Histórico de Pedidos</a>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </nav>
+    </header>
+
+    <!-- Contenedor principal -->
+    <main>
+        <h1>Pedidos Pendientes</h1>
+
+        <div class="filter-container">
+            <label for="filter-column">Filtrar por:</label>
+            <select id="filter-column">
+                <option value="alumno">Alumno</option>
+                <option value="bocadillo">Bocadillo</option>
+            </select>
+
+            <input type="text" id="filter-value" placeholder="Introduce un valor para filtrar">
+            <button id="filter-button">Filtrar</button>
+            <button id="reset-button">Restablecer</button>
+        </div>
+        <div id="error-message" class="error-message"></div>
+
+
+        <!-- Resumen de bocadillos -->
+	    <div id="bocadillos-resumen" class="bocadillos-resumen">
+	        <!-- Resúmenes dinámicos se insertarán aquí -->
+	    </div>
+
+
+        
+        <!-- Contenedor de la tabla -->
+        <div class="table-container">
+            <table id="pedidos-table">
+                <thead>
+                    <tr>
+                        <th>Alumno</th>
+                        <th>Bocadillo</th>
+                        <th>Precio</th>
+                        <th>Fecha Pedido</th>
+                        <th>Fecha Recogida</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Filas dinámicas se insertarán aquí -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        <div id="pagination-container" class="pagination-container">
+            <button id="prev-page-btn" class="pagination-btn" onclick="changePage('prev')">Anterior</button>
+            <span id="page-info">Página 1 de 1</span>
+            <button id="next-page-btn" class="pagination-btn" onclick="changePage('next')">Siguiente</button>
+            <input type="number" id="page-input" class="page-input" min="1" onchange="goToPage()">
+        </div>
+    </main>
+</body>
+</html>
