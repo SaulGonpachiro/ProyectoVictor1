@@ -43,8 +43,8 @@ function cargarAlumnos() {
                     <td>${parseFloat(al.monedero).toFixed(2)} €</td>
                     <td>${al.id_curso_alumno ? al.id_curso_alumno : ""}</td>
                     <td>
-                        <button type="button" class="btn-small" onclick='editarAlumno(${JSON.stringify(al)})'>Editar</button>
-                        <button type="button" class="btn-small danger" onclick="eliminarAlumno(${JSON.stringify(al.nombre)})">Eliminar</button>
+                        <button type="button" class="btn-edit" onclick='editarAlumno(${JSON.stringify(al)})'>Editar</button>
+                        <button type="button" class="btn-delete" onclick="eliminarAlumno(${JSON.stringify(al.nombre)})">Eliminar</button>
                     </td>
                 `;
 

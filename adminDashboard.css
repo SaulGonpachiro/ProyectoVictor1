@@ -1,13 +1,18 @@
-/* ============================
-   BASE ADMIN
-   ============================ */
 body.admin-body {
     margin: 0;
     font-family: Arial, sans-serif;
     display: block !important;
     width: 100%;
     line-height: 1.4;
+
+    /* Fondo igual que en login */
+    background-image: url('./medios/paredblanca.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
+
 
 /* ============================
    NAVBAR SUPERIOR
@@ -101,7 +106,7 @@ body.admin-body {
    TARJETAS
    ============================ */
 .admin-card {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.9); /* un pelín transparente */
     border-radius: 12px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.08);
     padding: 24px 28px;
@@ -157,3 +162,84 @@ body.admin-body {
         width: 90%;
     }
 }
+.admin-logo-img {
+    height: 55px;   /* antes 40px, ahora un poco más grande */
+    width: auto;
+    display: block;
+}
+
+
+
+/* Botón Editar (verde) */
+.btn-edit {
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: #fff;
+    font-weight: 600;
+    margin-right: 4px;
+    transition: 0.2s ease;
+}
+
+.btn-edit:hover {
+    background-color: #43a046;
+    transform: translateY(-1px);
+}
+
+/* Botón Eliminar (rojo) */
+.btn-delete {
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background-color: #e74c3c;
+    color: #fff;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+    transform: translateY(-1px);
+}
+
+
+body.admin-body {
+    background-image: url("./medios/paredblanca.png") !important;
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+/* Tarjeta más ancha para pantallas CRUD */
+.crud-wide {
+    width: 650px;          /* ancho más amplio */
+    max-width: 90%;        /* que no rompa en móvil */
+}
+
+
+/* Espaciado equilibrado entre columnas CRUD */
+.tabla-admin th,
+.tabla-admin td {
+    padding: 6px 10px !important;   /* separación moderada */
+}
+
+/* Ajustes mínimos para columnas sin exagerar */
+.tabla-admin td:nth-child(2) {  /* Email */
+    min-width: 180px;
+}
+
+.tabla-admin td:nth-child(3) {  /* Monedero */
+    min-width: 80px;
+}
+
+.tabla-admin td:nth-child(4) {  /* Curso */
+    min-width: 70px;
+}
+

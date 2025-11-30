@@ -4,42 +4,110 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MiBOCADILLO - CRUD Bocadillos</title>
+
     <link rel="stylesheet" href="login.css">
     <link rel="stylesheet" href="adminDashboard.css">
+
     <script src="admin.js"></script>
-    <!-- Más adelante puedes añadir aquí crudBocadillos.js -->
+    <script src="crudBocadillos.js" defer></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             verificarAcceso();
         });
     </script>
 </head>
-<body>
-    <header class="navbar">
-        <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
-        <nav class="nav-options">
-            <a href="adminDashboard.html" class="nav-link">Panel admin</a>
-            <a href="crudAlumnos.html" class="nav-link">Alumnos</a>
-            <a href="crudBocadillos.html" class="nav-link active">Bocadillos</a>
-        </nav>
-        <button class="logout-btn" onclick="logoutAdmin()">Cerrar sesión</button>
-    </header>
 
-    <main class="admin-main" style="align-items:flex-start; padding-top:120px;">
-        <section class="admin-card" style="max-width:1000px; width:100%;">
+<body class="admin-body">
+<header class="admin-navbar">
+    <img src="./medios/logoMiBocata.png" alt="Mi Bocata" class="admin-logo-img">
+
+    <nav class="admin-nav-options">
+        <a href="adminDashboard.html" class="admin-nav-link">Panel admin</a>
+        <a href="crudAlumnos.html" class="admin-nav-link">Alumnos</a>
+        <a href="crudBocadillos.html" class="admin-nav-link admin-nav-link-active">Bocadillos</a>
+    </nav>
+
+    <button class="admin-logout-btn" onclick="logoutAdmin()">Cerrar sesión</button>
+</header>
+
+<main class="admin-content">
+    <section class="admin-cards">
+        <div class="admin-card crud-wide">
             <h2>Gestión de bocadillos</h2>
             <p>Aquí podrás crear, editar y eliminar bocadillos.</p>
 
-            <!-- Aquí irá el formulario para crear/editar bocadillos -->
-            <div id="crud-bocadillos-form">
-                <!-- Formulario a implementar -->
-            </div>
+            <!-- FORMULARIO CREAR / EDITAR BOCADILLOS -->
+            <form id="form-bocadillo" class="crud-form">
+                <!-- Para saber si estamos editando (PK original) -->
+                <input type="hidden" id="bocadillo-nombre-original">
 
-            <!-- Aquí la tabla de bocadillos existentes -->
-            <div id="crud-bocadillos-listado" style="margin-top:20px;">
-                <!-- Tabla a implementar -->
+                <div class="form-row">
+                    <label for="bocadillo-nombre">Nombre del bocadillo (PK)</label>
+                    <input type="text" id="bocadillo-nombre" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="bocadillo-ingredientes">Ingredientes</label>
+                    <input type="text" id="bocadillo-ingredientes">
+                </div>
+
+                <div class="form-row">
+                    <label for="bocadillo-tipo">Tipo de bocadillo</label>
+                    <input type="text" id="bocadillo-tipo">
+                </div>
+
+                <div class="form-row">
+                    <label for="bocadillo-precio">Precio venta público (€)</label>
+                    <input type="number" step="0.01" id="bocadillo-precio" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="bocadillo-alergenos">Alérgenos</label>
+                    <input type="text" id="bocadillo-alergenos">
+                </div>
+
+                <div class="form-row">
+                    <label for="bocadillo-dia">Día de la semana</label>
+                    <select id="bocadillo-dia" required>
+                        <option value="">Selecciona un día</option>
+                        <option value="lunes">Lunes</option>
+                        <option value="martes">Martes</option>
+                        <option value="miercoles">Miércoles</option>
+                        <option value="jueves">Jueves</option>
+                        <option value="viernes">Viernes</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="admin-btn">Guardar</button>
+                    <button type="button" class="admin-btn admin-btn-secondary" onclick="limpiarFormularioBocadillo()">Limpiar</button>
+                </div>
+
+                <p id="bocadillos-mensaje"></p>
+            </form>
+
+            <!-- LISTADO DE BOCADILLOS -->
+            <div id="crud-bocadillos-listado" class="crud-table-wrapper">
+                <table class="tabla-admin">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Ingredientes</th>
+                            <th>Tipo</th>
+                            <th>Precio</th>
+                            <th>Alérgenos</th>
+                            <th>Día</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-bocadillos">
+                        <!-- Filas generadas por JS -->
+                    </tbody>
+                </table>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+</main>
 </body>
 </html>

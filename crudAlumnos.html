@@ -9,85 +9,86 @@
     <link rel="stylesheet" href="adminDashboard.css">
 
     <script src="admin.js"></script>
-    <!-- Script de CRUD específico -->
     <script src="crudAlumnos.js" defer></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Solo verifica que el usuario sea admin
             verificarAcceso();
         });
     </script>
 </head>
-<body>
-    <header class="navbar">
-        <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
-        <nav class="nav-options">
-            <a href="adminDashboard.html" class="nav-link">Panel admin</a>
-            <a href="crudAlumnos.html" class="nav-link active">Alumnos</a>
-            <a href="crudBocadillos.html" class="nav-link">Bocadillos</a>
-        </nav>
-        <button class="logout-btn" onclick="logoutAdmin()">Cerrar sesión</button>
-    </header>
 
-    <main class="admin-main" style="align-items:flex-start; padding-top:120px;">
-        <section class="admin-card" style="max-width:1000px; width:100%;">
+<body class="admin-body">
+<header class="admin-navbar">
+    <img src="./medios/logoMiBocata.png" alt="Mi Bocata" class="admin-logo-img">
+
+    <nav class="admin-nav-options">
+        <a href="adminDashboard.html" class="admin-nav-link">Panel admin</a>
+        <a href="crudAlumnos.html" class="admin-nav-link admin-nav-link-active">Alumnos</a>
+        <a href="crudBocadillos.html" class="admin-nav-link">Bocadillos</a>
+    </nav>
+
+    <button class="admin-logout-btn" onclick="logoutAdmin()">Cerrar sesión</button>
+</header>
+
+<main class="admin-content">
+    <!-- IMPORTANTE: SIN style="width:100%" Y SIN style="max-width:1000px; width:100%" -->
+    <section class="admin-cards">
+        <div class="admin-card crud-wide">
             <h2>Gestión de alumnos</h2>
             <p>Aquí podrás listar, crear, editar y eliminar alumnos.</p>
 
-            <!-- FORMULARIO ALTA / EDICIÓN -->
-            <div id="crud-alumnos-form">
-                <form id="form-alumno" class="crud-form">
-                    <!-- nombre es PK; guardo el original para saber si se cambia -->
-                    <input type="hidden" id="alumno-nombre-original">
+            <!-- FORMULARIO -->
+            <form id="form-alumno" class="crud-form">
+                <input type="hidden" id="alumno-nombre-original">
 
-                    <div class="form-row">
-                        <label for="alumno-nombre">Nombre (PK)</label>
-                        <input type="text" id="alumno-nombre" required>
-                    </div>
+                <div class="form-row">
+                    <label for="alumno-nombre">Nombre</label>
+                    <input type="text" id="alumno-nombre" required>
+                </div>
 
-                    <div class="form-row">
-                        <label for="alumno-email">Email (usuario)</label>
-                        <input type="email" id="alumno-email" required>
-                    </div>
+                <div class="form-row">
+                    <label for="alumno-email">Email</label>
+                    <input type="email" id="alumno-email", required>
+                </div>
 
-                    <div class="form-row">
-                        <label for="alumno-monedero">Monedero (€)</label>
-                        <input type="number" step="0.01" id="alumno-monedero" required>
-                    </div>
+                <div class="form-row">
+                    <label for="alumno-monedero">Monedero</label>
+                    <input type="number" step="0.01" id="alumno-monedero" required>
+                </div>
 
-                    <div class="form-row">
-                        <label for="alumno-curso">Curso</label>
-                        <input type="text" id="alumno-curso">
-                    </div>
+                <div class="form-row">
+                    <label for="alumno-curso">Curso</label>
+                    <input type="text" id="alumno-curso">
+                </div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="admin-btn">Guardar</button>
-                        <button type="button" class="admin-btn secondary" onclick="limpiarFormularioAlumno()">Limpiar</button>
-                    </div>
+                <div class="form-actions">
+                    <button type="submit" class="admin-btn">Guardar</button>
+                    <button type="button" class="admin-btn admin-btn-secondary" onclick="limpiarFormularioAlumno()">Limpiar</button>
+                </div>
 
-                    <p id="alumnos-mensaje"></p>
-                </form>
-            </div>
+                <p id="alumnos-mensaje"></p>
+            </form>
 
-            <!-- LISTADO DE ALUMNOS -->
-            <div id="crud-alumnos-listado" style="margin-top:20px;">
+            <!-- LISTADO -->
+            <div id="crud-alumnos-listado" class="crud-table-wrapper">
                 <table class="tabla-admin">
                     <thead>
                         <tr>
-                            <th>Nombre (PK)</th>
-                            <th>Email usuario</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
                             <th>Monedero</th>
                             <th>Curso</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-alumnos">
-                        <!-- Filas generadas por JS (crudAlumnos.js) -->
+                        <!-- Rellenado por JS -->
                     </tbody>
                 </table>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+</main>
 </body>
 </html>
