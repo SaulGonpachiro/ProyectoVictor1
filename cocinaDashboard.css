@@ -218,3 +218,21 @@ table th, table td {
 table tbody tr:hover {
     background-color: #f9f9f9;
 }
+
+
+body {
+    margin: 0;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Empujamos el contenido hacia abajo para dejar hueco a la barra */
+main {
+    max-width: 1200px;
+    margin: 140px auto 40px;   /* mismo truco: ajusta el 140 si hace falta */
+    padding: 0 20px;
+}

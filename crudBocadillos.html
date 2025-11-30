@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MiBOCADILLO - CRUD Bocadillos</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="adminDashboard.css">
+    <script src="admin.js"></script>
+    <!-- Más adelante puedes añadir aquí crudBocadillos.js -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            verificarAcceso();
+        });
+    </script>
+</head>
+<body>
+    <header class="navbar">
+        <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
+        <nav class="nav-options">
+            <a href="adminDashboard.html" class="nav-link">Panel admin</a>
+            <a href="crudAlumnos.html" class="nav-link">Alumnos</a>
+            <a href="crudBocadillos.html" class="nav-link active">Bocadillos</a>
+        </nav>
+        <button class="logout-btn" onclick="logoutAdmin()">Cerrar sesión</button>
+    </header>
+
+    <main class="admin-main" style="align-items:flex-start; padding-top:120px;">
+        <section class="admin-card" style="max-width:1000px; width:100%;">
+            <h2>Gestión de bocadillos</h2>
+            <p>Aquí podrás crear, editar y eliminar bocadillos.</p>
+
+            <!-- Aquí irá el formulario para crear/editar bocadillos -->
+            <div id="crud-bocadillos-form">
+                <!-- Formulario a implementar -->
+            </div>
+
+            <!-- Aquí la tabla de bocadillos existentes -->
+            <div id="crud-bocadillos-listado" style="margin-top:20px;">
+                <!-- Tabla a implementar -->
+            </div>
+        </section>
+    </main>
+</body>
+</html>

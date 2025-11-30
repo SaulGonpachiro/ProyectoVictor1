@@ -1,13 +1,20 @@
-// verificar que el usuario es de administrador
+// Verificar que el usuario es administrador
 function verificarAcceso() {
     const authKey = localStorage.getItem("auth_key");
     const tipoUsuario = localStorage.getItem("tipo_usuario");
 
-    // Verificar si el auth_key existe y si el tipoUsuario es administrador
+    // Si no hay auth_key o no es admin, bloquear acceso
     if (!authKey || tipoUsuario !== 'admin') {
-        // Guardar el mensaje de error en localStorage
-        localStorage.setItem("error_message", "No tienes permisos para acceder a esta página.");
-        
-        window.location.href = "index.html"; // Redirigir si no cumple los permisos
+        localStorage.setItem(
+            "error_message",
+            "No tienes permisos para acceder a esta página."
+        );
+        window.location.href = "index.html"; // Volver al login
     }
+}
+
+// Cerrar sesión para admin (y cualquier otro usuario)
+function logoutAdmin() {
+    localStorage.clear();
+    window.location.href = "index.html";
 }
