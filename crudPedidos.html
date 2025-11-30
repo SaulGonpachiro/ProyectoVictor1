@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MiBOCADILLO - CRUD Pedidos</title>
+
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="adminDashboard.css">
+
+    <script src="admin.js"></script>
+    <script src="crudPedidos.js" defer></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            verificarAcceso();
+        });
+    </script>
+</head>
+
+<body class="admin-body">
+<header class="admin-navbar">
+    <img src="./medios/logoMiBocata.png" alt="Mi Bocata" class="admin-logo-img">
+
+    <nav class="admin-nav-options">
+        <a href="adminDashboard.html" class="admin-nav-link">Panel admin</a>
+        <a href="crudAlumnos.html" class="admin-nav-link">Alumnos</a>
+        <a href="crudBocadillos.html" class="admin-nav-link">Bocadillos</a>
+        <a href="crudPedidos.html" class="admin-nav-link admin-nav-link-active">Pedidos</a>
+    </nav>
+
+    <button class="admin-logout-btn" onclick="logoutAdmin()">Cerrar sesión</button>
+</header>
+
+<main class="admin-content">
+    <section class="admin-cards">
+        <div class="admin-card crud-wide">
+            <h2>Gestión de pedidos</h2>
+            <p>Aquí podrás listar, editar y eliminar pedidos realizados por los alumnos.</p>
+
+            <!-- FORMULARIO PEDIDOS -->
+            <form id="form-pedido" class="crud-form">
+                <!-- ID para edición -->
+                <input type="hidden" id="pedido-id-original">
+
+                <div class="form-row">
+                    <label for="pedido-id">ID pedido</label>
+                    <input type="number" id="pedido-id" placeholder="(auto)" disabled>
+                </div>
+
+                <div class="form-row">
+                    <label for="pedido-alumno">Alumno</label>
+                    <input type="text" id="pedido-alumno" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="pedido-bocadillo">Bocadillo</label>
+                    <input type="text" id="pedido-bocadillo" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="pedido-precio">Precio</label>
+                    <input type="number" step="0.01" id="pedido-precio" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="pedido-fecha">Fecha pedido</label>
+                    <input type="date" id="pedido-fecha" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="pedido-fecha-recogida">Fecha recogida</label>
+                    <input type="date" id="pedido-fecha-recogida">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="admin-btn">Guardar</button>
+                    <button type="button" class="admin-btn admin-btn-secondary" onclick="limpiarFormularioPedido()">Limpiar</button>
+                </div>
+
+                <p id="pedidos-mensaje"></p>
+            </form>
+
+            <!-- LISTADO DE PEDIDOS -->
+            <div id="crud-pedidos-listado" class="crud-table-wrapper">
+                <table class="tabla-admin">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Alumno</th>
+                            <th>Bocadillo</th>
+                            <th>Precio</th>
+                            <th>Fecha</th>
+                            <th>Fecha recogida</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-pedidos">
+                        <!-- Rellenado por JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

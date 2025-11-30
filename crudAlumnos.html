@@ -26,13 +26,13 @@
         <a href="adminDashboard.html" class="admin-nav-link">Panel admin</a>
         <a href="crudAlumnos.html" class="admin-nav-link admin-nav-link-active">Alumnos</a>
         <a href="crudBocadillos.html" class="admin-nav-link">Bocadillos</a>
+        <a href="crudPedidos.html" class="admin-nav-link">Pedidos</a>
     </nav>
 
     <button class="admin-logout-btn" onclick="logoutAdmin()">Cerrar sesión</button>
 </header>
 
 <main class="admin-content">
-    <!-- IMPORTANTE: SIN style="width:100%" Y SIN style="max-width:1000px; width:100%" -->
     <section class="admin-cards">
         <div class="admin-card crud-wide">
             <h2>Gestión de alumnos</h2>
@@ -49,7 +49,7 @@
 
                 <div class="form-row">
                     <label for="alumno-email">Email</label>
-                    <input type="email" id="alumno-email", required>
+                    <input type="email" id="alumno-email" required>
                 </div>
 
                 <div class="form-row">
@@ -59,7 +59,23 @@
 
                 <div class="form-row">
                     <label for="alumno-curso">Curso</label>
-                    <input type="text" id="alumno-curso">
+                    <select id="alumno-curso">
+                        <option value="">Selecciona un curso</option>
+
+                        <option value="1ESO-A">1ESO-A</option>
+                        <option value="1ESO-B">1ESO-B</option>
+                        <option value="2ESO-A">2ESO-A</option>
+                        <option value="2ESO-B">2ESO-B</option>
+                        <option value="3ESO-A">3ESO-A</option>
+                        <option value="3ESO-B">3ESO-B</option>
+                        <option value="4ESO-A">4ESO-A</option>
+                        <option value="4ESO-B">4ESO-B</option>
+
+                        <option value="1BACH-A">1BACH-A</option>
+                        <option value="1BACH-B">1BACH-B</option>
+                        <option value="2BACH-A">2BACH-A</option>
+                        <option value="2BACH-B">2BACH-B</option>
+                    </select>
                 </div>
 
                 <div class="form-actions">

@@ -9,13 +9,13 @@ session_start();
 require 'Conexion.php';
 
 try {
-    $data = json_decode(file_get_contents('php://input'), true);
+    $data   = json_decode(file_get_contents('php://input'), true);
     $action = $_GET['action'] ?? null;
 
     if (!$action) {
         echo json_encode([
             'success' => false,
-            'message' => 'No se especificó ninguna acción.',
+            'message' => 'Acción no especificada.',
         ]);
         exit;
     }
@@ -23,23 +23,8 @@ try {
     $db = DB::getInstance();
 
     switch ($action) {
-        case 'getSaldoAlumno':
-            getSaldoAlumno($db, $data);
-            break;
+        /* ====== ENDPOINTS CRUD ADMIN ALUMNOS ====== */
 
-        case 'getBocadillosAlumno':
-            getBocadillosAlumno($db, $data);
-            break;
-
-        case 'hacerPedido':
-            hacerPedido($db, $data);
-            break;
-
-        case 'getHistoricoPedidosAlumno':
-            getHistoricoPedidosAlumno($db, $data);
-            break;
-
-        // === ACCIONES CRUD ALUMNOS PARA ADMIN ===
         case 'listarAlumnos':
             listarAlumnos($db);
             break;
@@ -56,6 +41,24 @@ try {
             eliminarAlumno($db, $data);
             break;
 
+        /* ====== ENDPOINTS ALUMNO (FRONT PEDIR BOCADILLO) ====== */
+
+        case 'getSaldoAlumno':
+            getSaldoAlumno($db, $data);
+            break;
+
+        case 'getBocadillosAlumno':
+            getBocadillosAlumno($db, $data);
+            break;
+
+        case 'hacerPedido':
+            hacerPedido($db, $data);
+            break;
+
+        case 'getHistoricoPedidosAlumno':
+            getHistoricoPedidosAlumno($db, $data);
+            break;
+
         default:
             echo json_encode([
                 'success' => false,
@@ -70,10 +73,16 @@ try {
     ]);
 }
 
-// ========== FUNCIONES CRUD ALUMNOS (ADMIN) ==========
+/* ============================================================
+   FUNCIONES CRUD ADMIN ALUMNOS
+   ============================================================ */
 
-function listarAlumnos($db) {
-    $stmt = $db->prepare("SELECT nombre, id_email_usuario, monedero, id_curso_alumno FROM alumno ORDER BY nombre");
+function listarAlumnos($db)
+{
+    $sql = "SELECT nombre, id_email_usuario, monedero, id_curso_alumno
+            FROM alumno
+            ORDER BY nombre";
+    $stmt = $db->prepare($sql);
     $stmt->execute();
     $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -83,35 +92,82 @@ function listarAlumnos($db) {
     ]);
 }
 
-function crearAlumno($db, $data) {
-    $nombre = $data['nombre'] ?? null;
-    $email = $data['id_email_usuario'] ?? null;
-    $monedero = $data['monedero'] ?? 0;
-    $curso = $data['id_curso_alumno'] ?? null;
+/**
+ * Crea un alumno y, si no existe, también un usuario asociado.
+ * Password por defecto: '1234' (hash).
+ */
+function crearAlumno($db, $data)
+{
+    $nombre    = trim($data['nombre'] ?? '');
+    $email     = trim($data['id_email_usuario'] ?? '');
+    $monedero  = $data['monedero'] ?? 0;
+    $curso     = trim($data['id_curso_alumno'] ?? '');
 
-    if (!$nombre || !$email) {
+    if ($nombre === '' || $email === '') {
         echo json_encode([
             'success' => false,
-            'message' => 'Faltan datos obligatorios: nombre o email.',
+            'message' => 'Nombre y email son obligatorios.',
         ]);
         return;
     }
 
+    $monedero = floatval(str_replace(',', '.', $monedero));
+
     try {
-        $stmt = $db->prepare("INSERT INTO alumno (nombre, id_email_usuario, monedero, id_curso_alumno)
-                              VALUES (:nombre, :email, :monedero, :curso)");
-        $stmt->execute([
-            ':nombre'   => $nombre,
-            ':email'    => $email,
-            ':monedero' => $monedero,
-            ':curso'    => $curso,
-        ]);
+        $db->beginTransaction();
+
+        // ¿Ya existe un alumno con ese nombre?
+        $stmt = $db->prepare("SELECT COUNT(*) FROM alumno WHERE nombre = :nombre");
+        $stmt->bindParam(':nombre', $nombre);
+        $stmt->execute();
+        if ($stmt->fetchColumn() > 0) {
+            $db->rollBack();
+            echo json_encode([
+                'success' => false,
+                'message' => 'Ya existe un alumno con ese nombre (PK).',
+            ]);
+            return;
+        }
+
+        // Comprobar si existe usuario con ese email
+        $stmt = $db->prepare("SELECT COUNT(*) FROM usuario WHERE email = :email");
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        $existeUsuario = $stmt->fetchColumn() > 0;
+
+        if (!$existeUsuario) {
+            // Crear usuario básico para que respete la FK
+            $passwordHash = password_hash('1234', PASSWORD_DEFAULT);
+            $tipoUsuario  = 'alumnado';
+
+            $stmt = $db->prepare("INSERT INTO usuario (email, password, tipo_usuario)
+                                  VALUES (:email, :password, :tipo)");
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':password', $passwordHash);
+            $stmt->bindParam(':tipo', $tipoUsuario);
+            $stmt->execute();
+        }
+
+        // Insertar alumno
+        $sql = "INSERT INTO alumno (nombre, id_email_usuario, monedero, id_curso_alumno)
+                VALUES (:nombre, :email, :monedero, :curso)";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':nombre', $nombre);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':monedero', $monedero);
+        $stmt->bindParam(':curso', $curso);
+        $stmt->execute();
+
+        $db->commit();
 
         echo json_encode([
             'success' => true,
             'message' => 'Alumno creado correctamente.',
         ]);
-    } catch (PDOException $e) {
+    } catch (Exception $e) {
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
         echo json_encode([
             'success' => false,
             'message' => 'Error al crear alumno: ' . $e->getMessage(),
@@ -119,41 +175,89 @@ function crearAlumno($db, $data) {
     }
 }
 
-function actualizarAlumno($db, $data) {
-    $nombreOriginal = $data['nombre_original'] ?? null;
-    $nombre = $data['nombre'] ?? null;
-    $email = $data['id_email_usuario'] ?? null;
-    $monedero = $data['monedero'] ?? 0;
-    $curso = $data['id_curso_alumno'] ?? null;
+function actualizarAlumno($db, $data)
+{
+    $nombreOriginal = trim($data['nombre_original'] ?? '');
+    $nombreNuevo    = trim($data['nombre'] ?? '');
+    $emailNuevo     = trim($data['id_email_usuario'] ?? '');
+    $monedero       = $data['monedero'] ?? 0;
+    $curso          = trim($data['id_curso_alumno'] ?? '');
 
-    if (!$nombreOriginal) {
+    if ($nombreOriginal === '' || $nombreNuevo === '' || $emailNuevo === '') {
         echo json_encode([
             'success' => false,
-            'message' => 'Falta el nombre original del alumno.',
+            'message' => 'Nombre original, nombre y email son obligatorios.',
         ]);
         return;
     }
 
+    $monedero = floatval(str_replace(',', '.', $monedero));
+
     try {
-        $stmt = $db->prepare("UPDATE alumno
-                              SET nombre = :nombre,
-                                  id_email_usuario = :email,
-                                  monedero = :monedero,
-                                  id_curso_alumno = :curso
-                              WHERE nombre = :nombre_original");
-        $stmt->execute([
-            ':nombre'          => $nombre,
-            ':email'           => $email,
-            ':monedero'        => $monedero,
-            ':curso'           => $curso,
-            ':nombre_original' => $nombreOriginal,
-        ]);
+        $db->beginTransaction();
+
+        // Obtenemos el email actual del alumno
+        $stmt = $db->prepare("SELECT id_email_usuario FROM alumno WHERE nombre = :nombre");
+        $stmt->bindParam(':nombre', $nombreOriginal);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            $db->rollBack();
+            echo json_encode([
+                'success' => false,
+                'message' => 'Alumno no encontrado.',
+            ]);
+            return;
+        }
+
+        $emailActual = $row['id_email_usuario'];
+
+        // Si cambia el email, actualizamos la tabla usuario (ON UPDATE CASCADE se encargará de alumno)
+        if ($emailActual !== $emailNuevo) {
+            // Comprobar si ya existe otro usuario con el nuevo email
+            $stmt = $db->prepare("SELECT COUNT(*) FROM usuario WHERE email = :email");
+            $stmt->bindParam(':email', $emailNuevo);
+            $stmt->execute();
+            if ($stmt->fetchColumn() > 0) {
+                $db->rollBack();
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Ya existe un usuario con ese email.',
+                ]);
+                return;
+            }
+
+            $stmt = $db->prepare("UPDATE usuario SET email = :nuevoEmail WHERE email = :viejoEmail");
+            $stmt->bindParam(':nuevoEmail', $emailNuevo);
+            $stmt->bindParam(':viejoEmail', $emailActual);
+            $stmt->execute();
+            // La FK alumno.id_email_usuario se actualiza sola por ON UPDATE CASCADE.
+        }
+
+        // Actualizar datos del alumno
+        $sql = "UPDATE alumno
+                SET nombre = :nombreNuevo,
+                    monedero = :monedero,
+                    id_curso_alumno = :curso
+                WHERE nombre = :nombreOriginal";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':nombreNuevo', $nombreNuevo);
+        $stmt->bindParam(':monedero', $monedero);
+        $stmt->bindParam(':curso', $curso);
+        $stmt->bindParam(':nombreOriginal', $nombreOriginal);
+        $stmt->execute();
+
+        $db->commit();
 
         echo json_encode([
             'success' => true,
             'message' => 'Alumno actualizado correctamente.',
         ]);
-    } catch (PDOException $e) {
+    } catch (Exception $e) {
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
         echo json_encode([
             'success' => false,
             'message' => 'Error al actualizar alumno: ' . $e->getMessage(),
@@ -161,26 +265,54 @@ function actualizarAlumno($db, $data) {
     }
 }
 
-function eliminarAlumno($db, $data) {
-    $nombre = $data['nombre'] ?? null;
+function eliminarAlumno($db, $data)
+{
+    $nombre = trim($data['nombre'] ?? '');
 
-    if (!$nombre) {
+    if ($nombre === '') {
         echo json_encode([
             'success' => false,
-            'message' => 'Falta el nombre del alumno.',
+            'message' => 'Nombre del alumno requerido.',
         ]);
         return;
     }
 
     try {
-        $stmt = $db->prepare("DELETE FROM alumno WHERE nombre = :nombre");
-        $stmt->execute([':nombre' => $nombre]);
+        $db->beginTransaction();
+
+        // Conseguimos el email del alumno para borrar también el usuario
+        $stmt = $db->prepare("SELECT id_email_usuario FROM alumno WHERE nombre = :nombre");
+        $stmt->bindParam(':nombre', $nombre);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            $db->rollBack();
+            echo json_encode([
+                'success' => false,
+                'message' => 'Alumno no encontrado.',
+            ]);
+            return;
+        }
+
+        $email = $row['id_email_usuario'];
+
+        // Al borrar el usuario se borrará el alumno por ON DELETE CASCADE
+        // y, a su vez, los pedidos por la FK de pedidos->alumno (también ON DELETE CASCADE).
+        $stmt = $db->prepare("DELETE FROM usuario WHERE email = :email");
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+
+        $db->commit();
 
         echo json_encode([
             'success' => true,
-            'message' => 'Alumno eliminado correctamente.',
+            'message' => 'Alumno y usuario asociados eliminados correctamente.',
         ]);
-    } catch (PDOException $e) {
+    } catch (Exception $e) {
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
         echo json_encode([
             'success' => false,
             'message' => 'Error al eliminar alumno: ' . $e->getMessage(),
@@ -188,9 +320,12 @@ function eliminarAlumno($db, $data) {
     }
 }
 
-// ========== FUNCIONES EXISTENTES ==========
+/* ============================================================
+   FUNCIONES PARA EL ALUMNO (SALDO, BOCADILLOS, PEDIDOS)
+   ============================================================ */
 
-function getSaldoAlumno($db, $data) {
+function getSaldoAlumno($db, $data)
+{
     $alumno = $data['alumno'] ?? null;
 
     if (!$alumno) {
@@ -202,15 +337,13 @@ function getSaldoAlumno($db, $data) {
     }
 
     $query = "SELECT monedero FROM alumno WHERE nombre = :alumno";
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(':alumno', $alumno, PDO::PARAM_STR);
+    $stmt  = $db->prepare($query);
+    $stmt->bindParam(':alumno', $alumno);
     $stmt->execute();
 
-    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+    $saldo = $stmt->fetchColumn();
 
-    if ($resultado) {
-        $saldo = floatval($resultado['monedero']);
-    } else {
+    if ($saldo === false) {
         echo json_encode([
             'success' => false,
             'message' => 'Alumno no encontrado.',
@@ -220,11 +353,12 @@ function getSaldoAlumno($db, $data) {
 
     echo json_encode([
         'success' => true,
-        'saldo' => $saldo,
+        'saldo'   => $saldo,
     ]);
 }
 
-function getBocadillosAlumno($db, $data) {
+function getBocadillosAlumno($db, $data)
+{
     $alumno = $data['alumno'] ?? null;
 
     if (!$alumno) {
@@ -235,45 +369,51 @@ function getBocadillosAlumno($db, $data) {
         return;
     }
 
+    // Bocadillos disponibles hoy (mismo día de la semana)
     $queryBocadillos = "
-        SELECT nombre_bocadillo, ingredientes, tipo_bocadillo, precio_venta_publico, alergenos 
-        FROM bocadillo 
+        SELECT nombre_bocadillo, ingredientes, tipo_bocadillo,
+               precio_venta_publico, alergenos
+        FROM bocadillo
         WHERE dia_semana = dayname(now())";
     $stmtBocadillos = $db->prepare($queryBocadillos);
     $stmtBocadillos->execute();
-
     $bocadillos = $stmtBocadillos->fetchAll(PDO::FETCH_ASSOC);
 
-    if (!$bocadillos) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'No hay bocadillos disponibles para hoy.',
-        ]);
-        return;
-    }
+    // Pedido actual del alumno (si lo hay)
+    $queryPedido = "
+        SELECT id_bocadillo_pedido
+        FROM pedidos
+        WHERE id_alumno_bocadillo = :alumno
+          AND fecha = date(now())";
+    $stmtPedido = $db->prepare($queryPedido);
+    $stmtPedido->bindParam(':alumno', $alumno);
+    $stmtPedido->execute();
+    $pedido = $stmtPedido->fetch(PDO::FETCH_ASSOC);
 
     echo json_encode([
-        'success' => true,
-        'bocadillos' => $bocadillos
+        'success'        => true,
+        'bocadillos'     => $bocadillos,
+        'pedido_actual'  => $pedido['id_bocadillo_pedido'] ?? null,
     ]);
 }
 
-function hacerPedido($db, $data) {
-    $alumno = $data['alumno'] ?? null;
+function hacerPedido($db, $data)
+{
+    $alumno   = $data['alumno'] ?? null;
     $bocadillo = $data['bocadillo'] ?? null;
-    $precio = $data['precio'] ?? null;
 
-    if (!$alumno || !$bocadillo || !$precio) {
+    if (!$alumno || !$bocadillo) {
         echo json_encode([
             'success' => false,
-            'message' => 'Faltan datos necesarios para realizar el pedido.',
+            'message' => 'Faltan datos necesarios: alumno y/o bocadillo.',
         ]);
         exit;
     }
 
+    // Horario en que se pueden hacer pedidos
     $horaActual = new DateTime('now', new DateTimeZone('Europe/Madrid'));
     $horaInicio = new DateTime('09:00', new DateTimeZone('Europe/Madrid'));
-    $horaFin = new DateTime('20:00', new DateTimeZone('Europe/Madrid'));
+    $horaFin    = new DateTime('20:00', new DateTimeZone('Europe/Madrid'));
 
     if ($horaActual < $horaInicio || $horaActual > $horaFin) {
         echo json_encode([
@@ -283,123 +423,149 @@ function hacerPedido($db, $data) {
         exit;
     }
 
-    $db = DB::getInstance();
-
-    // Verificar el saldo del alumno
+    // Saldo del alumno
     $querySaldo = "SELECT monedero FROM alumno WHERE nombre = :alumno";
-    $stmtSaldo = $db->prepare($querySaldo);
-    $stmtSaldo->bindParam(':alumno', $alumno, PDO::PARAM_STR);
+    $stmtSaldo  = $db->prepare($querySaldo);
+    $stmtSaldo->bindParam(':alumno', $alumno);
     $stmtSaldo->execute();
+    $saldo = $stmtSaldo->fetchColumn();
 
-    $resultadoSaldo = $stmtSaldo->fetch(PDO::FETCH_ASSOC);
-
-    if (!$resultadoSaldo) {
+    if ($saldo === false) {
         echo json_encode([
             'success' => false,
-            'message' => 'No se encontró el alumno especificado.',
+            'message' => 'Alumno no encontrado.',
         ]);
         exit;
     }
 
-    $saldoActual = floatval($resultadoSaldo['monedero']);
+    // Precio del nuevo bocadillo
+    $queryPrecioNuevo = "SELECT precio_venta_publico
+                         FROM bocadillo
+                         WHERE nombre_bocadillo = :bocadillo";
+    $stmtPrecioNuevo = $db->prepare($queryPrecioNuevo);
+    $stmtPrecioNuevo->bindParam(':bocadillo', $bocadillo);
+    $stmtPrecioNuevo->execute();
+    $precioNuevo = $stmtPrecioNuevo->fetchColumn();
 
-    // Verificar si el saldo es suficiente
-    if ($saldoActual < $precio) {
+    if ($precioNuevo === false) {
         echo json_encode([
             'success' => false,
-            'message' => 'Saldo insuficiente para realizar el pedido.',
+            'message' => 'Bocadillo no encontrado.',
         ]);
         exit;
     }
 
-    $db->beginTransaction();
+    // ¿Tiene ya pedido hoy?
+    $queryCheck = "SELECT id_bocadillo_pedido
+                   FROM pedidos
+                   WHERE id_alumno_bocadillo = :alumno
+                     AND fecha = date(now())";
+    $stmtCheck = $db->prepare($queryCheck);
+    $stmtCheck->bindParam(':alumno', $alumno);
+    $stmtCheck->execute();
+    $pedidoExistente = $stmtCheck->fetchColumn();
 
-    try {
-        // Insertar el pedido
-        $queryInsert = "
-            INSERT INTO pedidos (id_alumno_bocadillo, id_bocadillo_pedido, precio_pedido, fecha)
-            VALUES (:alumno, :bocadillo, :precio, NOW())
-        ";
-        $stmtInsert = $db->prepare($queryInsert);
+    if ($pedidoExistente) {
+        // Precio del bocadillo antiguo
+        $queryPrecioAntiguo = "SELECT precio_venta_publico
+                               FROM bocadillo
+                               WHERE nombre_bocadillo = :bocadillo";
+        $stmtPrecioAntiguo = $db->prepare($queryPrecioAntiguo);
+        $stmtPrecioAntiguo->bindParam(':bocadillo', $pedidoExistente);
+        $stmtPrecioAntiguo->execute();
+        $precioAntiguo = $stmtPrecioAntiguo->fetchColumn();
 
-        $stmtInsert->bindParam(':alumno', $alumno, PDO::PARAM_STR);
-        $stmtInsert->bindParam(':bocadillo', $bocadillo, PDO::PARAM_STR);
-        $stmtInsert->bindParam(':precio', $precio, PDO::PARAM_STR);
+        // Devolver antiguo y cobrar nuevo
+        $nuevoSaldo = $saldo + $precioAntiguo - $precioNuevo;
+    } else {
+        // Cobrar solo el nuevo
+        $nuevoSaldo = $saldo - $precioNuevo;
+    }
 
-        $stmtInsert->execute();
-
-        // Actualizar el saldo del alumno
-        $queryUpdateSaldo = "
-            UPDATE alumno 
-            SET monedero = monedero - :precio
-            WHERE nombre = :alumno
-        ";
-        $stmtUpdateSaldo = $db->prepare($queryUpdateSaldo);
-        $stmtUpdateSaldo->bindParam(':precio', $precio, PDO::PARAM_STR);
-        $stmtUpdateSaldo->bindParam(':alumno', $alumno, PDO::PARAM_STR);
-
-        $stmtUpdateSaldo->execute();
-
-        $db->commit();
-
-        echo json_encode([
-            'success' => true,
-            'message' => 'Pedido realizado con éxito y saldo actualizado.',
-        ]);
-    } catch (PDOException $e) {
-        $db->rollBack();
+    if ($nuevoSaldo < 0) {
         echo json_encode([
             'success' => false,
-            'message' => 'Error al realizar el pedido: ' . $e->getMessage(),
+            'message' => 'Saldo insuficiente en el monedero.',
         ]);
+        exit;
     }
+
+    // Actualizar saldo
+    $queryUpdateSaldo = "UPDATE alumno
+                         SET monedero = :nuevoSaldo
+                         WHERE nombre = :alumno";
+    $stmtUpdateSaldo = $db->prepare($queryUpdateSaldo);
+    $stmtUpdateSaldo->bindParam(':nuevoSaldo', $nuevoSaldo);
+    $stmtUpdateSaldo->bindParam(':alumno', $alumno);
+    $stmtUpdateSaldo->execute();
+
+    if ($pedidoExistente) {
+        // Actualizar pedido existente
+        $queryUpdatePedido = "
+            UPDATE pedidos
+            SET id_bocadillo_pedido = :bocadillo,
+                precio_pedido       = :precioNuevo
+            WHERE id_alumno_bocadillo = :alumno
+              AND fecha = date(now())";
+        $stmtUpdatePedido = $db->prepare($queryUpdatePedido);
+        $stmtUpdatePedido->bindParam(':bocadillo', $bocadillo);
+        $stmtUpdatePedido->bindParam(':precioNuevo', $precioNuevo);
+        $stmtUpdatePedido->bindParam(':alumno', $alumno);
+        $stmtUpdatePedido->execute();
+    } else {
+        // Nuevo pedido
+        $queryInsertPedido = "
+            INSERT INTO pedidos (id_alumno_bocadillo, id_bocadillo_pedido,
+                                 precio_pedido, fecha)
+            VALUES (:alumno, :bocadillo, :precioNuevo, date(now()))";
+        $stmtInsertPedido = $db->prepare($queryInsertPedido);
+        $stmtInsertPedido->bindParam(':alumno', $alumno);
+        $stmtInsertPedido->bindParam(':bocadillo', $bocadillo);
+        $stmtInsertPedido->bindParam(':precioNuevo', $precioNuevo);
+        $stmtInsertPedido->execute();
+    }
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Pedido realizado y saldo actualizado con éxito.',
+    ]);
 }
 
-function getHistoricoPedidosAlumno($db, $data) {
+function getHistoricoPedidosAlumno($db, $data)
+{
     $alumno = $data['alumno'] ?? null;
 
     if (!$alumno) {
         echo json_encode([
             'success' => false,
-            'message' => 'Faltan datos necesarios: alumno.',
+            'message' => 'Faltan datos: alumno.',
         ]);
-        return;
+        exit;
     }
 
-    // Consulta SQL para obtener los pedidos del alumno, incluyendo nombre de bocadillo y precio
     $query = "
         SELECT 
-            p.id_pedido,
-            p.fecha,
-            p.fecha_recogida,
+            a.nombre              AS alumno,
+            b.nombre_bocadillo    AS bocadillo,
+            b.tipo_bocadillo      AS tipo,
             p.precio_pedido,
-            b.nombre_bocadillo,
-            b.tipo_bocadillo
-        FROM 
-            pedidos p
-        JOIN 
-            bocadillo b ON p.id_bocadillo_pedido = b.nombre_bocadillo
-        WHERE 
-            p.id_alumno_bocadillo = :alumno
-        ORDER BY 
-            p.fecha DESC
+            p.fecha,
+            p.fecha_recogida
+        FROM pedidos p
+        JOIN alumno   a ON p.id_alumno_bocadillo = a.nombre
+        JOIN bocadillo b ON p.id_bocadillo_pedido = b.nombre_bocadillo
+        WHERE a.nombre = :alumno
+        ORDER BY p.fecha DESC
     ";
 
-    // Preparar la consulta SQL
     $stmt = $db->prepare($query);
-
-    // Vincular el parámetro al valor del nombre del alumno
     $stmt->bindParam(':alumno', $alumno, PDO::PARAM_STR);
-
-    // Ejecutar la consulta
     $stmt->execute();
-
-    // Obtener los resultados
     $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode([
         'success' => true,
-        'pedidos' => $pedidos
+        'pedidos' => $pedidos,
     ]);
 }
 

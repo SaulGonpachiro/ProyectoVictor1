@@ -3,54 +3,82 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MiBOCADILLO - Panel Admin</title>
+    <title>MiBOCADILLO - Panel admin</title>
 
-    <!-- Fondo/estilo general del proyecto -->
     <link rel="stylesheet" href="login.css">
-    <!-- Estilos específicos del admin (el que te paso abajo) -->
     <link rel="stylesheet" href="adminDashboard.css">
 
     <script src="admin.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            verificarAcceso(); // Solo deja entrar si es admin
+            verificarAcceso();
         });
     </script>
+
+    <style>
+        /* Logo grande centrado debajo de las tarjetas */
+        .admin-big-logo {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .admin-big-logo img {
+            width: 260px;   /* Ajusta el tamaño aquí */
+            opacity: 0.92;
+        }
+    </style>
 </head>
+
 <body class="admin-body">
-    <!-- BARRA SUPERIOR -->
-        <header class="admin-navbar">
-        <img src="./medios/logoMiBocata.png" alt="Mi Bocata" class="admin-logo-img">
+<header class="admin-navbar">
+    <img src="./medios/logoMiBocata.png" alt="Mi Bocata" class="admin-logo-img">
 
+    <nav class="admin-nav-options">
+        <a href="adminDashboard.html" class="admin-nav-link admin-nav-link-active">Panel admin</a>
+        <a href="crudAlumnos.html" class="admin-nav-link">Alumnos</a>
+        <a href="crudBocadillos.html" class="admin-nav-link">Bocadillos</a>
+        <a href="crudPedidos.html" class="admin-nav-link">Pedidos</a>
+    </nav>
 
-        <nav class="admin-nav-options">
-            <a href="adminDashboard.html" class="admin-nav-link admin-nav-link-active">Panel admin</a>
-            <a href="crudAlumnos.html" class="admin-nav-link">Alumnos</a>
-            <a href="crudBocadillos.html" class="admin-nav-link">Bocadillos</a>
-        </nav>
+    <button class="admin-logout-btn" onclick="logoutAdmin()">Cerrar sesión</button>
+</header>
 
-        <button class="admin-logout-btn" onclick="logoutAdmin()">Cerrar sesión</button>
-    </header>
+<main class="admin-content">
+    <section class="admin-cards">
+        <!-- Tarjeta ALUMNOS -->
+        <div class="admin-card">
+            <h2>Gestión de alumnos</h2>
+            <p>Dar de alta, modificar datos, gestionar monedero y eliminar alumnos.</p>
+            <button class="admin-btn" onclick="location.href='crudAlumnos.html'">
+                Ir al CRUD de alumnos
+            </button>
+        </div>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="admin-content">
-        <section class="admin-cards">
-            <div class="admin-card">
-                <h2>Gestión de alumnos</h2>
-                <p>Dar de alta, modificar datos, gestionar monedero y eliminar alumnos.</p>
-                <button class="admin-btn" onclick="window.location.href='crudAlumnos.html'">
-                    Ir al CRUD de alumnos
-                </button>
-            </div>
+        <!-- Tarjeta BOCADILLOS -->
+        <div class="admin-card">
+            <h2>Gestión de bocadillos</h2>
+            <p>Crear, editar o eliminar bocadillos y asignarlos por día de la semana.</p>
+            <button class="admin-btn" onclick="location.href='crudBocadillos.html'">
+                Ir al CRUD de bocadillos
+            </button>
+        </div>
 
-            <div class="admin-card">
-                <h2>Gestión de bocadillos</h2>
-                <p>Crear, editar o eliminar bocadillos y asignarlos por día de la semana.</p>
-                <button class="admin-btn" onclick="window.location.href='crudBocadillos.html'">
-                    Ir al CRUD de bocadillos
-                </button>
-            </div>
-        </section>
-    </main>
+        <!-- Tarjeta PEDIDOS -->
+        <div class="admin-card">
+            <h2>Gestión de pedidos</h2>
+            <p>Consultar, modificar y eliminar pedidos realizados por el alumnado.</p>
+            <button class="admin-btn" onclick="location.href='crudPedidos.html'">
+                Ir al CRUD de pedidos
+            </button>
+        </div>
+    </section>
+
+    <!-- LOGO GRANDE CENTRADO -->
+    <div class="admin-big-logo">
+        <img src="./medios/logoMiBocata.png" alt="Logo grande Mi Bocata">
+    </div>
+</main>
 </body>
 </html>

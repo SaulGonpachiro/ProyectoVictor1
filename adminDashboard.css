@@ -80,16 +80,15 @@ body.admin-body {
     color: #fff;
 }
 
-/* ============================
-   CONTENIDO PRINCIPAL
-   ============================ */
 .admin-content {
     width: 100%;
     box-sizing: border-box;
     padding: 130px 40px 50px 40px;
     display: flex;
-    justify-content: center;      /* CENTRA LAS TARJETAS */
+    flex-direction: column;   /* APILA elementos: tarjetas arriba, logo debajo */
+    align-items: center;      /* centra horizontalmente */
 }
+
 
 /* CONTENEDOR HORIZONTAL DE LAS TARJETAS */
 .admin-cards {
@@ -162,13 +161,12 @@ body.admin-body {
         width: 90%;
     }
 }
+
 .admin-logo-img {
-    height: 55px;   /* antes 40px, ahora un poco más grande */
+    height: 55px;
     width: auto;
     display: block;
 }
-
-
 
 /* Botón Editar (verde) */
 .btn-edit {
@@ -207,7 +205,7 @@ body.admin-body {
     transform: translateY(-1px);
 }
 
-
+/* Reafirmamos fondo para admin-body */
 body.admin-body {
     background-image: url("./medios/paredblanca.png") !important;
     background-size: cover;
@@ -216,30 +214,30 @@ body.admin-body {
     background-position: center;
 }
 
-
 /* Tarjeta más ancha para pantallas CRUD */
 .crud-wide {
-    width: 650px;          /* ancho más amplio */
-    max-width: 90%;        /* que no rompa en móvil */
+    width: 900px;
+    max-width: 95%;
 }
-
 
 /* Espaciado equilibrado entre columnas CRUD */
 .tabla-admin th,
 .tabla-admin td {
-    padding: 6px 10px !important;   /* separación moderada */
+    padding: 6px 8px !important;
 }
 
-/* Ajustes mínimos para columnas sin exagerar */
-.tabla-admin td:nth-child(2) {  /* Email */
-    min-width: 180px;
+.tabla-admin td:nth-child(2) { min-width: 180px; }
+.tabla-admin td:nth-child(3) { min-width: 80px; }
+.tabla-admin td:nth-child(4) { min-width: 70px; }
+
+/* Logo grande centrado debajo de las tarjetas del panel admin */
+.admin-big-logo {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
 }
 
-.tabla-admin td:nth-child(3) {  /* Monedero */
-    min-width: 80px;
+.admin-big-logo img {
+    width: 400px;   /* ← tamaño actualizado */
+    opacity: 0.92;
 }
-
-.tabla-admin td:nth-child(4) {  /* Curso */
-    min-width: 70px;
-}
-

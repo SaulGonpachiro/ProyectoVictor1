@@ -26,6 +26,7 @@
         <a href="adminDashboard.html" class="admin-nav-link">Panel admin</a>
         <a href="crudAlumnos.html" class="admin-nav-link">Alumnos</a>
         <a href="crudBocadillos.html" class="admin-nav-link admin-nav-link-active">Bocadillos</a>
+        <a href="crudPedidos.html" class="admin-nav-link">Pedidos</a> <!-- NUEVO -->
     </nav>
 
     <button class="admin-logout-btn" onclick="logoutAdmin()">Cerrar sesión</button>
@@ -43,7 +44,7 @@
                 <input type="hidden" id="bocadillo-nombre-original">
 
                 <div class="form-row">
-                    <label for="bocadillo-nombre">Nombre del bocadillo (PK)</label>
+                    <label for="bocadillo-nombre">Nombre</label>
                     <input type="text" id="bocadillo-nombre" required>
                 </div>
 
@@ -52,13 +53,15 @@
                     <input type="text" id="bocadillo-ingredientes">
                 </div>
 
-                <div class="form-row">
-                    <label for="bocadillo-tipo">Tipo de bocadillo</label>
-                    <input type="text" id="bocadillo-tipo">
-                </div>
+                <label for="bocadillo-tipo">Tipo de bocadillo</label>
+                <select id="bocadillo-tipo" required>
+                    <option value="">Selecciona un tipo</option>
+                    <option value="frío">Frío</option>
+                    <option value="caliente">Caliente</option>
+                </select>
 
                 <div class="form-row">
-                    <label for="bocadillo-precio">Precio venta público (€)</label>
+                    <label for="bocadillo-precio">Precio</label>
                     <input type="number" step="0.01" id="bocadillo-precio" required>
                 </div>
 
