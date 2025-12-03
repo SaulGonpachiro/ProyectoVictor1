@@ -1,26 +1,43 @@
 // crudBocadillos.js
 
 document.addEventListener("DOMContentLoaded", () => {
-    // En el HTML ya llamas a verificarAcceso(), aquí solo cargamos datos y eventos
     cargarBocadillos();
 
-    const form = document.getElementById("form-bocadillo");
-    if (form) {
-        form.addEventListener("submit", guardarBocadillo);
+    document.getElementById("form-bocadillo").addEventListener("submit", guardarBocadillo);
+
+    const inputBusqueda = document.getElementById("bocadillo-busqueda");
+    if (inputBusqueda) {
+        inputBusqueda.addEventListener("keyup", pintarBocadillos);
+    }
+
+    const filtroTipo = document.getElementById("bocadillo-tipo-filtro");
+    if (filtroTipo) {
+        filtroTipo.addEventListener("change", pintarBocadillos);
     }
 });
 
-// Cambia esto por el PHP que vayas a usar (igual que hicimos con sw_alumno.php)
 const API_BOCADILLOS = "sw_bocadillo.php";
+let listaBocadillos = [];
 
-function mostrarMensajeBocadillos(texto, esError = false) {
+// Normaliza acentos y mayúsculas: "Frío" -> "frio"
+function normalizarTipo(str) {
+    if (!str) return "";
+    return str
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, ""); // quita acentos
+}
+
+function mostrarMensajeBocadillos(texto, error = false) {
     const p = document.getElementById("bocadillos-mensaje");
     if (!p) return;
     p.textContent = texto;
-    p.style.color = esError ? "red" : "green";
+    p.style.color = error ? "red" : "green";
 }
 
-// ====================== LISTAR ======================
+// ===============================
+// Cargar
+// ===============================
 function cargarBocadillos() {
     fetch(`${API_BOCADILLOS}?action=listarBocadillos`)
         .then(r => r.json())
@@ -30,92 +47,123 @@ function cargarBocadillos() {
                 return;
             }
 
-            const tbody = document.getElementById("tbody-bocadillos");
-            if (!tbody) return;
-
-            tbody.innerHTML = "";
-
-            data.bocadillos.forEach(b => {
-                const tr = document.createElement("tr");
-
-                tr.innerHTML = `
-                    <td>${b.nombre_bocadillo}</td>
-                    <td>${b.ingredientes ?? ""}</td>
-                    <td>${b.tipo_bocadillo ?? ""}</td>
-                    <td>${parseFloat(b.precio_venta_publico).toFixed(2)} €</td>
-                    <td>${b.alergenos ?? ""}</td>
-                    <td>${b.dia_semana}</td>
-                    <td>
-                        <button type="button" class="btn-edit" onclick='editarBocadillo(${JSON.stringify(b)})'>Editar</button>
-                        <button type="button" class="btn-delete" onclick="eliminarBocadillo(${JSON.stringify(b.nombre_bocadillo)})">Eliminar</button>
-                    </td>
-                `;
-
-                tbody.appendChild(tr);
-            });
+            listaBocadillos = data.bocadillos || [];
+            pintarBocadillos();
         })
-        .catch(err => {
-            console.error(err);
-            mostrarMensajeBocadillos("Error de comunicación con el servidor.", true);
-        });
+        .catch(() => mostrarMensajeBocadillos("Error comunicando con el servidor", true));
 }
 
-// ====================== FORMULARIO ======================
+// ===============================
+// Pintar tabla con filtros
+// ===============================
+function pintarBocadillos() {
+    const tbody = document.getElementById("tbody-bocadillos");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+
+    const texto = document.getElementById("bocadillo-busqueda").value.toLowerCase().trim();
+    const tipoFiltro = document.getElementById("bocadillo-tipo-filtro").value; // "frio" / "caliente" / ""
+
+    let lista = listaBocadillos;
+
+    if (texto !== "") {
+        lista = lista.filter(b =>
+            (b.nombre_bocadillo || "").toLowerCase().includes(texto)
+        );
+    }
+
+    if (tipoFiltro !== "") {
+        lista = lista.filter(b =>
+            normalizarTipo(b.tipo_bocadillo) === tipoFiltro
+        );
+    }
+
+    lista.forEach(b => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${b.nombre_bocadillo}</td>
+            <td>${b.ingredientes || ""}</td>
+            <td>${b.tipo_bocadillo || ""}</td>
+            <td>${parseFloat(b.precio_venta_publico).toFixed(2)} €</td>
+            <td>${b.alergenos || ""}</td>
+            <td>${b.dia_semana}</td>
+            <td>
+                <button class="btn-edit" onclick='editarBocadillo(${JSON.stringify(b)})'>Editar</button>
+                <button class="btn-delete" onclick='eliminarBocadillo(${JSON.stringify(b.nombre_bocadillo)})'>Eliminar</button>
+            </td>
+        `;
+
+        tbody.appendChild(tr);
+    });
+}
+
+// ===============================
+// Limpiar formulario
+// ===============================
 function limpiarFormularioBocadillo() {
-    const nombreOriginal = document.getElementById("bocadillo-nombre-original");
-    const nombre = document.getElementById("bocadillo-nombre");
-    const ingredientes = document.getElementById("bocadillo-ingredientes");
-    const tipo = document.getElementById("bocadillo-tipo");
-    const precio = document.getElementById("bocadillo-precio");
-    const alergenos = document.getElementById("bocadillo-alergenos");
-    const dia = document.getElementById("bocadillo-dia");
-
-    if (nombreOriginal) nombreOriginal.value = "";
-    if (nombre) nombre.value = "";
-    if (ingredientes) ingredientes.value = "";
-    if (tipo) tipo.value = "";
-    if (precio) precio.value = "";
-    if (alergenos) alergenos.value = "";
-    if (dia) dia.value = "";
+    document.getElementById("bocadillo-original").value = "";
+    document.getElementById("bocadillo-nombre").value = "";
+    document.getElementById("bocadillo-ingredientes").value = "";
+    document.getElementById("bocadillo-tipo").value = "";
+    document.getElementById("bocadillo-precio").value = "";
+    document.getElementById("bocadillo-alergenos").value = "";
+    document.getElementById("bocadillo-dia").value = "Monday";
 }
 
+// ===============================
+// Editar
+// ===============================
 function editarBocadillo(b) {
-    document.getElementById("bocadillo-nombre-original").value = b.nombre_bocadillo;
-    document.getElementById("bocadillo-nombre").value = b.nombre_bocadillo;
-    document.getElementById("bocadillo-ingredientes").value = b.ingredientes ?? "";
-    document.getElementById("bocadillo-tipo").value = b.tipo_bocadillo ?? "";
-    document.getElementById("bocadillo-precio").value = b.precio_venta_publico;
-    document.getElementById("bocadillo-alergenos").value = b.alergenos ?? "";
-    document.getElementById("bocadillo-dia").value = b.dia_semana;
+    document.getElementById("bocadillo-original").value      = b.nombre_bocadillo;
+    document.getElementById("bocadillo-nombre").value        = b.nombre_bocadillo;
+    document.getElementById("bocadillo-ingredientes").value  = b.ingredientes || "";
+
+    const tipoNorm = normalizarTipo(b.tipo_bocadillo);
+    if (tipoNorm === "frio" || tipoNorm === "caliente") {
+        document.getElementById("bocadillo-tipo").value = tipoNorm;
+    } else {
+        document.getElementById("bocadillo-tipo").value = "";
+    }
+
+    document.getElementById("bocadillo-precio").value        = b.precio_venta_publico;
+    document.getElementById("bocadillo-alergenos").value     = b.alergenos || "";
+    document.getElementById("bocadillo-dia").value           = b.dia_semana;
 }
 
-// ====================== GUARDAR (CREATE / UPDATE) ======================
+// ===============================
+// Guardar (crear / actualizar)
+// ===============================
 function guardarBocadillo(e) {
     e.preventDefault();
 
-    const nombreOriginal = document.getElementById("bocadillo-nombre-original").value;
+    const original = document.getElementById("bocadillo-original").value;
 
-    const bocadillo = {
+    const b = {
         nombre_bocadillo: document.getElementById("bocadillo-nombre").value.trim(),
-        ingredientes: document.getElementById("bocadillo-ingredientes").value.trim(),
-        tipo_bocadillo: document.getElementById("bocadillo-tipo").value.trim(),
+        ingredientes:     document.getElementById("bocadillo-ingredientes").value.trim(),
+        tipo_bocadillo:   document.getElementById("bocadillo-tipo").value.trim(), // "frio" / "caliente"
         precio_venta_publico: document.getElementById("bocadillo-precio").value.trim(),
-        alergenos: document.getElementById("bocadillo-alergenos").value.trim(),
-        dia_semana: document.getElementById("bocadillo-dia").value
+        alergenos:        document.getElementById("bocadillo-alergenos").value.trim(),
+        dia_semana:       document.getElementById("bocadillo-dia").value
     };
 
-    if (!bocadillo.nombre_bocadillo || !bocadillo.dia_semana || !bocadillo.precio_venta_publico) {
-        mostrarMensajeBocadillos("Nombre, precio y día de la semana son obligatorios.", true);
+    if (!b.nombre_bocadillo || !b.precio_venta_publico || !b.dia_semana) {
+        mostrarMensajeBocadillos("Nombre, precio y día son obligatorios.", true);
         return;
     }
 
-    const action = nombreOriginal ? "actualizarBocadillo" : "crearBocadillo";
-    if (nombreOriginal) bocadillo.nombre_original = nombreOriginal;
+    if (original) {
+        b.nombre_original = original;
+    }
+
+    const action = original ? "actualizarBocadillo" : "crearBocadillo";
 
     fetch(`${API_BOCADILLOS}?action=${action}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bocadillo),
+        body: JSON.stringify(b)
     })
         .then(r => r.json())
         .then(data => {
@@ -129,23 +177,25 @@ function guardarBocadillo(e) {
         })
         .catch(err => {
             console.error(err);
-            mostrarMensajeBocadillos("Error de comunicación con el servidor.", true);
+            mostrarMensajeBocadillos("Error comunicando con el servidor.", true);
         });
 }
 
-// ====================== ELIMINAR ======================
-function eliminarBocadillo(nombre_bocadillo) {
-    if (!confirm("¿Seguro que quieres eliminar este bocadillo?")) return;
+// ===============================
+// Eliminar
+// ===============================
+function eliminarBocadillo(nombre) {
+    if (!confirm("¿Eliminar este bocadillo?")) return;
 
     fetch(`${API_BOCADILLOS}?action=eliminarBocadillo`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre_bocadillo }),
+        body: JSON.stringify({ nombre_bocadillo: nombre })
     })
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                mostrarMensajeBocadillos(data.message || "Bocadillo eliminado correctamente.");
+                mostrarMensajeBocadillos(data.message || "Bocadillo eliminado.");
                 cargarBocadillos();
             } else {
                 mostrarMensajeBocadillos(data.message || "No se pudo eliminar el bocadillo.", true);
@@ -153,6 +203,6 @@ function eliminarBocadillo(nombre_bocadillo) {
         })
         .catch(err => {
             console.error(err);
-            mostrarMensajeBocadillos("Error de comunicación con el servidor.", true);
+            mostrarMensajeBocadillos("Error comunicando con el servidor.", true);
         });
 }

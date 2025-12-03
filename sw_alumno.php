@@ -410,15 +410,15 @@ function hacerPedido($db, $data)
         exit;
     }
 
-    // Horario en que se pueden hacer pedidos
+    // Horario en que se pueden hacer pedidos, pongo este para que me de tiempo a probarlo en clase
     $horaActual = new DateTime('now', new DateTimeZone('Europe/Madrid'));
     $horaInicio = new DateTime('09:00', new DateTimeZone('Europe/Madrid'));
-    $horaFin    = new DateTime('20:00', new DateTimeZone('Europe/Madrid'));
+    $horaFin    = new DateTime('21:00', new DateTimeZone('Europe/Madrid'));
 
     if ($horaActual < $horaInicio || $horaActual > $horaFin) {
         echo json_encode([
             'success' => false,
-            'message' => 'Los pedidos solo pueden realizarse entre las 9:00 y las 11:00.',
+            'message' => 'Los pedidos solo pueden realizarse entre las 9:00 y las 21:00.',
         ]);
         exit;
     }

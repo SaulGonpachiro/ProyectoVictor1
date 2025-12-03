@@ -62,6 +62,54 @@
                     <select id="alumno-curso">
                         <option value="">Selecciona un curso</option>
 
+                        <optgroup label="ESO">
+                            <option value="1ESO-A">1ESO-A</option>
+                            <option value="1ESO-B">1ESO-B</option>
+                            <option value="2ESO-A">2ESO-A</option>
+                            <option value="2ESO-B">2ESO-B</option>
+                            <option value="3ESO-A">3ESO-A</option>
+                            <option value="3ESO-B">3ESO-B</option>
+                            <option value="4ESO-A">4ESO-A</option>
+                            <option value="4ESO-B">4ESO-B</option>
+                        </optgroup>
+
+                        <optgroup label="Bachillerato">
+                            <option value="1BACH-A">1BACH-A</option>
+                            <option value="1BACH-B">1BACH-B</option>
+                            <option value="2BACH-A">2BACH-A</option>
+                            <option value="2BACH-B">2BACH-B</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="admin-btn">Guardar</button>
+                    <button type="button" class="admin-btn admin-btn-secondary" onclick="limpiarFormularioAlumno()">Limpiar</button>
+                </div>
+
+                <p id="alumnos-mensaje"></p>
+            </form>
+
+            <!-- FILTROS -->
+            <div class="crud-search" style="margin: 25px 0 18px 0; display:flex; gap:15px;">
+                
+                <!-- Filtro por nombre -->
+                <div style="flex:2;">
+                    <label style="font-weight:600;">Buscar por nombre</label>
+                    <input
+                        type="text"
+                        id="alumnos-busqueda"
+                        placeholder="Escribe un nombre..."
+                        style="width:100%; padding:6px 10px; border-radius:6px; border:1px solid #ccc;"
+                    >
+                </div>
+
+                <!-- Filtro por curso -->
+                <div style="flex:1;">
+                    <label style="font-weight:600;">Filtrar por curso</label>
+                    <select id="alumnos-curso-filtro" style="width:100%; padding:6px 10px; border-radius:6px; border:1px solid #ccc;">
+                        <option value="">Todos</option>
+
                         <option value="1ESO-A">1ESO-A</option>
                         <option value="1ESO-B">1ESO-B</option>
                         <option value="2ESO-A">2ESO-A</option>
@@ -77,14 +125,7 @@
                         <option value="2BACH-B">2BACH-B</option>
                     </select>
                 </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="admin-btn">Guardar</button>
-                    <button type="button" class="admin-btn admin-btn-secondary" onclick="limpiarFormularioAlumno()">Limpiar</button>
-                </div>
-
-                <p id="alumnos-mensaje"></p>
-            </form>
+            </div>
 
             <!-- LISTADO -->
             <div id="crud-alumnos-listado" class="crud-table-wrapper">
