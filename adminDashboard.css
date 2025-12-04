@@ -248,3 +248,54 @@ body.admin-body {
     padding-top: 10 !important;
 }
 
+/* PAGINACIÓN ALUMNOS */
+.paginacion {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.paginacion-info {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.paginacion-botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+}
+
+.paginacion-btn {
+    min-width: 32px;
+    padding: 6px 10px;
+    border-radius: 999px;        /* pastilla redondeada */
+    border: 1px solid #ddd;
+    background: #f6f6f6;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.paginacion-btn:hover:not(:disabled) {
+    background: #e2e2e2;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+}
+
+.paginacion-btn.activo {
+    background: #4CAF50;
+    border-color: #4CAF50;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(199, 11, 11, 0.4);
+}
+
+.paginacion-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+    box-shadow: none;
+}
