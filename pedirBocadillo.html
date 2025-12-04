@@ -3,40 +3,54 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Pedir Bocadillo</title>
+	<title>Pedir Bocadillo - MiBOCADILLO</title>
+
+    <!-- Estilos: admin + específico de alumno -->
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="adminDashboard.css">
     <link rel="stylesheet" href="pedirBocadillo.css">
+
 	<script src="alumnado.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            verificarAcceso();
-            mostrarSaldo();
+            // Igual que antes: control de acceso y saldo
+            if (typeof verificarAcceso === "function") {
+                verificarAcceso();
+            }
+            if (typeof mostrarSaldo === "function") {
+                mostrarSaldo();
+            }
         });
     </script>
 </head>
-<body>
-	<!-- Barra de navegación superior -->
-    <header class="navbar">
-        <div class="logo-container">
-            <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
+
+<body class="admin-body">
+    <!-- Barra superior con el diseño de admin -->
+    <header class="admin-navbar">
+        <div style="display:flex; align-items:center; gap:16px;">
+            <img src="./medios/logoMiBocata.png" alt="Mi Bocata" class="admin-logo-img">
+            <!-- Mantenemos el mismo id de saldo que usas en JS -->
             <span id="saldo-alumno" class="saldo">Saldo: -- €</span>
         </div>
-        <nav class="nav-options">
-            <a href="pedirBocadillo.html" class="nav-link">PedirBocadillo</a>
-            <a href="historicoPedidosAlumno.html" class="nav-link">Histórico de Pedidos</a>
-            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+
+        <nav class="admin-nav-options">
+            <a href="pedirBocadillo.html" class="admin-nav-link admin-nav-link-active">Pedir Bocadillo</a>
+            <a href="historicoPedidosAlumno.html" class="admin-nav-link">Histórico de Pedidos</a>
         </nav>
+
+        <button class="admin-logout-btn" onclick="logout()">Cerrar Sesión</button>
     </header>
 
-    <!-- Contenedor principal -->
-    <main>
+    <!-- Contenido principal -->
+    <main class="admin-content">
         <h1>Selecciona tu Bocadillo</h1>
 
-        <!-- Contenedor para mensajes de error-->
-    	<div id="mensaje-error" class="mensaje-error" style="display: none;"></div>
+        <!-- Contenedor para mensajes de error -->
+        <div id="mensaje-error" class="mensaje-error" style="display: none;"></div>
 
-        <!-- Contenedor de opciones -->
+        <!-- Contenedor de opciones de bocadillos -->
         <div class="bocadillos-container" id="bocadillos-container">
-            <!-- Bocadillos dinámicos se insertarán aquí -->
+            <!-- Bocadillos dinámicos se insertarán aquí por alumnado.js -->
         </div>
     </main>
 </body>

@@ -241,3 +241,10 @@ body.admin-body {
     width: 400px;   /* ← tamaño actualizado */
     opacity: 0.92;
 }
+
+
+.admin-content {
+    margin-top: 40px !important;
+    padding-top: 10 !important;
+}
+

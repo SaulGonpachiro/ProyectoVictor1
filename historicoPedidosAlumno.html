@@ -4,7 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Histórico de Pedidos - MiBOCADILLO</title>
+
+    <!-- Añadimos los estilos de admin, pero mantenemos el de cocina porque aquí están las tablas -->
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="adminDashboard.css">
     <link rel="stylesheet" href="cocinaDashboard.css">
+
     <script src="historicoPedidosAlumno.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -12,19 +17,21 @@
         });
     </script>
 </head>
-<body>
-    <!-- Barra de navegación superior -->
-    <header class="navbar">
-        <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
-        <nav class="nav-options">
-            <a href="pedirBocadillo.html" class="nav-link">Pedidos del Día</a>
-            <a href="historicoPedidosAlumno.html" class="nav-link">Histórico de Pedidos</a>
-            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+<body class="admin-body">
+    <!-- Barra de navegación superior con el diseño del admin -->
+    <header class="admin-navbar">
+        <img src="./medios/logoMiBocata.png" alt="Mi Bocata" class="admin-logo-img">
+
+        <nav class="admin-nav-options">
+            <a href="pedirBocadillo.html" class="admin-nav-link">Pedir Bocadillo</a>
+            <a href="historicoPedidosAlumno.html" class="admin-nav-link admin-nav-link-active">Histórico de Pedidos</a>
         </nav>
+
+        <button class="admin-logout-btn" onclick="logout()">Cerrar Sesión</button>
     </header>
 
-    <!-- Contenedor principal -->
-    <main>
+    <!-- Contenedor principal (solo añado la clase, el contenido es el mismo que el original) -->
+    <main class="admin-content">
         <h1>Histórico de Pedidos</h1>
 
         <div id="error-message" class="error-container"></div>
@@ -36,7 +43,7 @@
                 <option value="tipo">Tipo</option>
                 <option value="precio_pedido">Precio</option>
                 <option value="fecha">Fecha Pedido</option>
-                <option value="fecha_recogida">Fecha Recogida</option>
+                <option value="fecha_recogida">Pedido Listo</option>
             </select>
 
             <input type="text" id="filter-value" placeholder="Introduce un valor para filtrar">
@@ -57,7 +64,7 @@
                         <th data-column="tipo">Tipo</th>
                         <th data-column="precio_pedido">Precio</th>
                         <th data-column="fecha">Fecha Pedido</th>
-                        <th>Fecha Recogida</th>
+                        <th>Pedido Listo</th>
                     </tr>
                 </thead>
                 <tbody>

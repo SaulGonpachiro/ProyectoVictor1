@@ -3,8 +3,13 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>MiBOCADILLO</title>
+	<title>MiBOCADILLO - Cocina</title>
+
+    <!-- Estilos: añadimos los del admin, pero mantenemos el específico de cocina -->
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="adminDashboard.css">
 	<link rel="stylesheet" href="cocinaDashboard.css">
+
 	<script src="cocina.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -12,19 +17,23 @@
         });
     </script>
 </head>
-<body>
-	<!-- Barra de navegación superior -->
-    <header class="navbar">
-        <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
-        <nav class="nav-options">
-        	<a href="cocinaDashboard.html" class="nav-link">Pedidos del Día</a>
-        	<a href="historicoPedidosCocina.html" class="nav-link">Histórico de Pedidos</a>
-            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+
+<body class="admin-body">
+    <!-- Barra de navegación superior con el diseño de admin -->
+    <header class="admin-navbar">
+        <img src="./medios/logoMiBocata.png" alt="Mi Bocata" class="admin-logo-img">
+
+        <nav class="admin-nav-options">
+            <!-- Esta página es la activa -->
+            <a href="cocinaDashboard.html" class="admin-nav-link admin-nav-link-active">Pedidos del Día</a>
+            <a href="historicoPedidosCocina.html" class="admin-nav-link">Histórico de Pedidos</a>
         </nav>
+
+        <button class="admin-logout-btn" onclick="logout()">Cerrar Sesión</button>
     </header>
 
-    <!-- Contenedor principal -->
-    <main>
+    <!-- Contenedor principal: solo añado la clase, el contenido interno lo dejo igual -->
+    <main class="admin-content">
         <h1>Pedidos Pendientes</h1>
 
         <div class="filter-container">
@@ -40,14 +49,11 @@
         </div>
         <div id="error-message" class="error-message"></div>
 
-
         <!-- Resumen de bocadillos -->
-	    <div id="bocadillos-resumen" class="bocadillos-resumen">
-	        <!-- Resúmenes dinámicos se insertarán aquí -->
-	    </div>
+        <div id="bocadillos-resumen" class="bocadillos-resumen">
+            <!-- Resúmenes dinámicos se insertarán aquí -->
+        </div>
 
-
-        
         <!-- Contenedor de la tabla -->
         <div class="table-container">
             <table id="pedidos-table">
@@ -57,7 +63,7 @@
                         <th>Bocadillo</th>
                         <th>Precio</th>
                         <th>Fecha Pedido</th>
-                        <th>Fecha Recogida</th>
+                        <th>Pedido Listo</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,6 +74,9 @@
 
         <!-- Paginación -->
         <div id="pagination-container" class="pagination-container">
+            <!-- OJO: dejo los mismos ids que usa cocina.js;
+                 los onclick realmente te sobran porque ya usas addEventListener en el JS,
+                 pero los mantengo tal cual para no romper nada más -->
             <button id="prev-page-btn" class="pagination-btn" onclick="changePage('prev')">Anterior</button>
             <span id="page-info">Página 1 de 1</span>
             <button id="next-page-btn" class="pagination-btn" onclick="changePage('next')">Siguiente</button>
